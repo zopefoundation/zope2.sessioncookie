@@ -20,6 +20,13 @@ class SignedSessionCookieConfig(object):
         self.cookie_name = cookie_name
         self.max_age = max_age
         self.path = path
-        self.domain = domain
+        self.domain = domain or ''
         self.secure = secure
         self.http_only = http_only
+
+    def getCookieAttrs(self):
+        """-> dict for configuring the Pyramid session cookie class."""
+        result = dict([(key, value) for key, value in self.__dict__.items()
+                       if value is not None])
+        result['httponly'] = result.pop('http_only')
+        return result
