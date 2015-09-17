@@ -17,4 +17,5 @@ setup(name='zope2.signedsessioncookie',
       namespace_packages=['zope2',],
       include_package_data=True,
       install_requires=['pyramid>=1.5', 'Zope2>=2.13'],
+      test_suite='zope2.signedsessioncookie.tests',
 )

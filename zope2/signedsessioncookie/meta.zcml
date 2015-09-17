@@ -1,0 +1,15 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:meta="http://namespaces.zope.org/meta">
+
+  <meta:directive
+      name="signedsessioncookie"
+      namespace="https://github.com/zeomega/zope2.signedsessioncookie"
+      schema=".interfaces.ISignedSessionCookieConfig"
+      handler=".zcml.configureSSC"
+      >
+      Configure the signed session cookie.
+  </meta:directive>
+
+</configure>
+
