@@ -1,3 +1,4 @@
+from zope.interface import Attribute
 from zope.interface import Interface
 from zope.configuration._compat import u
 from zope.schema import Bool
@@ -55,3 +56,11 @@ class ISignedSessionCookieConfig(Interface):
         description=u("Mark the session cookie invisible to Javascript?"),
         required=False,
     )
+
+
+class ISignedSessionCookieCreated(Interface):
+    """ Event interface for newly-created session.
+
+    I.e., no session cookie was present in the browser beforehand.
+    """
+    session = Attribute("Newly-created session")

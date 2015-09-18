@@ -64,21 +64,48 @@ class Test__getSessionClass(_Base):
         self.assertEqual(response.counter, 1)
 
 
+class SignedSessionCookieCreatedTests(unittest.TestCase):
+
+    _dummy = object()
+
+    def _getTargetClass(self):
+        from .. import SignedSessionCookieCreated
+        return SignedSessionCookieCreated
+
+    def _makeOne(self, session=_dummy):
+        return self._getTargetClass()(session)
+
+    def test_class_conforms_to_ISignedSessionCookieCreated(self):
+        from zope.interface.verify import verifyClass
+        from ..interfaces import ISignedSessionCookieCreated
+        verifyClass(ISignedSessionCookieCreated, self._getTargetClass())
+
+    def test_instance_conforms_to_ISignedSessionCookieCreated(self):
+        from zope.interface.verify import verifyObject
+        from ..interfaces import ISignedSessionCookieCreated
+        verifyObject(ISignedSessionCookieCreated, self._makeOne())
+
+
 class Test_ssc_hook(_Base):
 
     def _callFUT(self, container, request):
         from .. import ssc_hook
         return ssc_hook(container, request)
 
-    def test_it(self):
+    def setUp(self):
+        from zope.event import subscribers
+        super(Test_ssc_hook, self).setUp()
+        self._old_subscribers = subscribers[:]
 
-        class _ZopeResponse(object):
-            counter = 0
-            def __init__(self):
-                self.cookies = {}
-            def setCookie(self, name, **kw):
-                self.cookies[name] = kw
-                self.counter += 1
+    def tearDown(self):
+        from zope.event import subscribers
+        super(Test_ssc_hook, self).setUp()
+        subscribers[:] = self._old_subscribers
+
+    def test_wo_existing_session(self):
+        from zope.event import subscribers
+        _handled = []
+        subscribers.append(_handled.append)
 
         container = object()
         request = _Request()
@@ -90,7 +117,11 @@ class Test_ssc_hook(_Base):
         self.assertTrue(response.set_cookie.im_func is
                         response.setCookie.im_func)
         self.assertEqual(request._lazy.keys(), ['SESSION'])
+        self.assertEqual(len(_handled), 0)
         session = request._lazy['SESSION']()
+        self.assertEqual(len(_handled), 1)
+        event = _handled[0]
+        self.assertTrue(event.session is session)
 
         session['foo'] = 'bar'
         self.assertEqual(response.cookies.keys(), [])
@@ -103,6 +134,17 @@ class Test_ssc_hook(_Base):
         request._response_callbacks[0](request, response)
         self.assertEqual(response.counter, 1)
         self.assertEqual(response.cookies.keys(), ['COOKIE'])
+
+        del _handled[:]
+        new_request = _Request()
+        new_request.cookies['COOKIE'] = response.cookies['COOKIE']
+        new_response = new_request.RESPONSE = _ZopeResponse()
+
+        self._callFUT(container, new_request)
+
+        self.assertEqual(len(_handled), 0)
+        session = new_request._lazy['SESSION']()
+        self.assertEqual(len(_handled), 0)
 
 
 class Test__emulate_pyramid_response_callback(_Base):
@@ -133,6 +175,18 @@ class _Response(object):
         self.cookies = {}
 
     def set_cookie(self, name, **kw):
+        self.cookies[name] = kw
+        self.counter += 1
+
+
+class _ZopeResponse(object):
+
+    counter = 0
+
+    def __init__(self):
+        self.cookies = {}
+
+    def setCookie(self, name, **kw):
         self.cookies[name] = kw
         self.counter += 1
 

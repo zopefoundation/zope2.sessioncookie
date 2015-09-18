@@ -7,8 +7,11 @@ from pyramid.session import SignedCookieSessionFactory
 from zope.component import adapter
 from zope.component import getUtility
 from zope.component import provideHandler
+from zope.event import notify
+from zope.interface import implementer
 
 from .interfaces import ISignedSessionCookieConfig
+from .interfaces import ISignedSessionCookieCreated
 
 ZopeCookieSession = None
 
@@ -44,6 +47,14 @@ def _getSessionClass():
 
     return ZopeCookieSession
 
+
+@implementer(ISignedSessionCookieCreated)
+class SignedSessionCookieCreated(object):
+    """Event implementation:  new session created."""
+    def __init__(self, session):
+        self.session = session
+
+
 def ssc_hook(container, request):
     """Hook for '__before_traverse__' on root object.
 
@@ -61,7 +72,12 @@ def ssc_hook(container, request):
 
     # Set up the lazy SESSION implementation.
     klass = _getSessionClass()
-    request.set_lazy('SESSION', lambda: klass(request))
+    def _with_event():
+        session = klass(request)
+        if klass._cookie_name not in request.cookies:
+            notify(SignedSessionCookieCreated(session))
+        return session
+    request.set_lazy('SESSION', _with_event)
 
 
 @adapter(IPubBeforeCommit)
