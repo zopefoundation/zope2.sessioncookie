@@ -2,8 +2,11 @@
 
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from AccessControl.class_init import InitializeClass
+from ZPublisher.interfaces import IPubBeforeCommit
 from pyramid.session import SignedCookieSessionFactory
+from zope.component import adapter
 from zope.component import getUtility
+from zope.component import provideHandler
 
 from .interfaces import ISignedSessionCookieConfig
 
@@ -37,9 +40,6 @@ def _getSessionClass():
             def __guarded_delitem__(self, key):
                 del self[key]
 
-            def changed(self):
-                self._set_cookie(self.request.RESPONSE)
-
         InitializeClass(ZopeCookieSession)
 
     return ZopeCookieSession
@@ -50,9 +50,25 @@ def ssc_hook(container, request):
     Establishes 'pyramid.session'-compatible methods on request/response,
     and sets up the wrapper session class.
     """
+    # Make the request emulate Pyramid's response.
+    request._response_callbacks = []
+    def _add_response_callback(func):
+        request._response_callbacks.append(func)
+    request.add_response_callback = _add_response_callback
+
     # Make the response emulate Pyramid's response.
     request.RESPONSE.set_cookie = request.RESPONSE.setCookie
 
     # Set up the lazy SESSION implementation.
     klass = _getSessionClass()
     request.set_lazy('SESSION', lambda: klass(request))
+
+
+@adapter(IPubBeforeCommit)
+def _emulate_pyramid_response_callback(event):
+    request = event.request
+    response = request.RESPONSE
+    for callback in getattr(request, '_response_callbacks', ()):
+        callback(request, response)
+
+provideHandler(_emulate_pyramid_response_callback)

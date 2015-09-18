@@ -58,6 +58,11 @@ class Test__getSessionClass(_Base):
         session.__guarded_delitem__('foo')
         self.assertEqual(dict(session), {})
 
+        self.assertEqual(response.counter, 0)  # cookie not set
+        self.assertEqual(len(request._response_callbacks), 1)
+        request._response_callbacks[0](request, response)
+        self.assertEqual(response.counter, 1)
+
 
 class Test_ssc_hook(_Base):
 
@@ -68,10 +73,12 @@ class Test_ssc_hook(_Base):
     def test_it(self):
 
         class _ZopeResponse(object):
+            counter = 0
             def __init__(self):
                 self.cookies = {}
             def setCookie(self, name, **kw):
                 self.cookies[name] = kw
+                self.counter += 1
 
         container = object()
         request = _Request()
@@ -86,16 +93,48 @@ class Test_ssc_hook(_Base):
         session = request._lazy['SESSION']()
 
         session['foo'] = 'bar'
+        self.assertEqual(response.cookies.keys(), [])
+
+        session['baz'] = 'bam'
+        self.assertEqual(response.cookies.keys(), [])
+
+        self.assertEqual(response.counter, 0)  # cookie not set
+        self.assertEqual(len(request._response_callbacks), 1)
+        request._response_callbacks[0](request, response)
+        self.assertEqual(response.counter, 1)
         self.assertEqual(response.cookies.keys(), ['COOKIE'])
 
 
+class Test__emulate_pyramid_response_callback(_Base):
+
+    def _callFUT(self, event):
+        from .. import _emulate_pyramid_response_callback
+        return _emulate_pyramid_response_callback(event)
+
+    def test_wo_callbacks(self):
+        event = _Event()
+        self._callFUT(event)  # no exception for missing _response_callbacks
+
+    def test_w_callbacks(self):
+        event = _Event()
+        _called = []
+        def _callback(request, response):
+            _called.append((request, response))
+        event.request._response_callbacks = [_callback]
+        self._callFUT(event)  # no exception for missing _response_callbacks
+        self.assertEqual(_called, [(event.request, event.request.RESPONSE)])
+
+
 class _Response(object):
+
+    counter = 0
 
     def __init__(self):
         self.cookies = {}
 
     def set_cookie(self, name, **kw):
         self.cookies[name] = kw
+        self.counter += 1
 
 
 class _Request(object):
@@ -106,3 +145,15 @@ class _Request(object):
 
     def set_lazy(self, name, factory):
         self._lazy[name] = factory
+
+    def add_response_callback(self, callback):
+        callbacks = getattr(self, '_response_callbacks', None)
+        if callbacks is None:
+            callbacks = self._response_callbacks = []
+        callbacks.append(callback)
+
+
+class _Event(object):
+    def __init__(self):
+        request = self.request = _Request()
+        response = request.RESPONSE = _Response()
