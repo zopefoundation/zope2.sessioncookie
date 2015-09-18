@@ -59,6 +59,36 @@ class Test__getSessionClass(_Base):
         self.assertEqual(dict(session), {})
 
 
+class Test_ssc_hook(_Base):
+
+    def _callFUT(self, container, request):
+        from .. import ssc_hook
+        return ssc_hook(container, request)
+
+    def test_it(self):
+
+        class _ZopeResponse(object):
+            def __init__(self):
+                self.cookies = {}
+            def setCookie(self, name, **kw):
+                self.cookies[name] = kw
+
+        container = object()
+        request = _Request()
+        response = request.RESPONSE = _ZopeResponse()
+        self._setUpUtility()
+
+        self._callFUT(container, request)
+
+        self.assertTrue(response.set_cookie.im_func is
+                        response.setCookie.im_func)
+        self.assertEqual(request._lazy.keys(), ['SESSION'])
+        session = request._lazy['SESSION']()
+
+        session['foo'] = 'bar'
+        self.assertEqual(response.cookies.keys(), ['COOKIE'])
+
+
 class _Response(object):
 
     def __init__(self):

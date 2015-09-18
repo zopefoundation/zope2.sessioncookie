@@ -43,3 +43,16 @@ def _getSessionClass():
         InitializeClass(ZopeCookieSession)
 
     return ZopeCookieSession
+
+def ssc_hook(container, request):
+    """Hook for '__before_traverse__' on root object.
+
+    Establishes 'pyramid.session'-compatible methods on request/response,
+    and sets up the wrapper session class.
+    """
+    # Make the response emulate Pyramid's response.
+    request.RESPONSE.set_cookie = request.RESPONSE.setCookie
+
+    # Set up the lazy SESSION implementation.
+    klass = _getSessionClass()
+    request.set_lazy('SESSION', lambda: klass(request))
