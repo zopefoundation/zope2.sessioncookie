@@ -56,6 +56,25 @@ class ISignedSessionCookieConfig(Interface):
         required=False,
     )
 
+    hash_algorithm = TextLine(
+        title=u"Hash Algorithm",
+        description=u"Name of algorithm used to sign cookie state",
+        default=u"sha512",
+        required=False,
+    )
+
+    timeout = Int(
+        title=u"Timeout",
+        description=u"Timeout (in seconds) for the session cookie value",
+        required=False,
+    )
+
+    reissue_time = Int(
+        title=u"Reissue Time",
+        description=u"Time (in seconds) for updating cookie value on access",
+        required=False,
+    )
+
 
 class ISignedSessionCookieCreated(Interface):
     """ Event interface for newly-created session.

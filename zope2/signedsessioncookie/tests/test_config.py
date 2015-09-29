@@ -31,10 +31,14 @@ class SignedSessionCookieConfigTests(unittest.TestCase):
         self.assertEqual(config.domain, None)
         self.assertEqual(config.secure, True)
         self.assertEqual(config.http_only, True)
+        self.assertEqual(config.hash_algorithm, None)
+        self.assertEqual(config.timeout, None)
+        self.assertEqual(config.reissue_time, None)
 
     def test_ctor_explicit(self):
         config = self._makeOne('SECRET', 'SALT', 'COOKIE', 1234,
-                               '/foo', 'www.example.com', False, False)
+                               '/foo', 'www.example.com', False, False,
+                               'md5', 2345, 234)
         self.assertEqual(config.secret, 'SECRET')
         self.assertEqual(config.salt, 'SALT')
         self.assertEqual(config.cookie_name, 'COOKIE')
@@ -43,6 +47,9 @@ class SignedSessionCookieConfigTests(unittest.TestCase):
         self.assertEqual(config.domain, 'www.example.com')
         self.assertEqual(config.secure, False)
         self.assertEqual(config.http_only, False)
+        self.assertEqual(config.hash_algorithm, 'md5')
+        self.assertEqual(config.timeout, 2345)
+        self.assertEqual(config.reissue_time, 234)
 
     def test_getCookieAttrs_defaults(self):
         config = self._makeOne('SECRET')
@@ -55,7 +62,8 @@ class SignedSessionCookieConfigTests(unittest.TestCase):
 
     def test_getCookieAttrs_explicit(self):
         config = self._makeOne('SECRET', 'SALT', 'COOKIE', 1234,
-                               '/foo', 'www.example.com', False, False)
+                               '/foo', 'www.example.com', False, False,
+                               'md5', 2345, 234)
         self.assertEqual(config.getCookieAttrs(),
                          {'secret': 'SECRET',
                           'salt': 'SALT',
@@ -65,4 +73,7 @@ class SignedSessionCookieConfigTests(unittest.TestCase):
                           'domain': 'www.example.com',
                           'secure': False,
                           'httponly': False,
+                          'hashalg': 'md5',
+                          'timeout': 2345,
+                          'reissue_time': 234,
                          })

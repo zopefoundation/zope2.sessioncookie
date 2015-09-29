@@ -12,7 +12,8 @@ class Test__doConfigure(unittest.TestCase):
         from ..config import SignedSessionCookieConfig
         from ..interfaces import ISignedSessionCookieConfig
         self._callFUT('SECRET', 'SALT', 'COOKIE', 1234,
-                      '/foo', 'www.example.com', False, False)
+                      '/foo', 'www.example.com', False, False,
+                      'md5', 2345, 234)
         config = getUtility(ISignedSessionCookieConfig)
         self.assertTrue(isinstance(config, SignedSessionCookieConfig))
         self.assertEqual(config.secret, 'SECRET')
@@ -23,6 +24,10 @@ class Test__doConfigure(unittest.TestCase):
         self.assertEqual(config.domain, 'www.example.com')
         self.assertEqual(config.secure, False)
         self.assertEqual(config.http_only, False)
+        # This value is only curried, not stored on the instance.
+        #self.assertEqual(config.hashalg, 'md5')
+        self.assertEqual(config.timeout, 2345)
+        self.assertEqual(config.reissue_time, 234)
 
 
 class Test_configureSSC(unittest.TestCase):
@@ -35,7 +40,8 @@ class Test_configureSSC(unittest.TestCase):
         from zope2.signedsessioncookie.zcml import _doConfigure
         context = _Context()
         self._callFUT(context, 'SECRET', 'SALT', 'COOKIE', 1234,
-                      '/foo', 'www.example.com', False, False)
+                      '/foo', 'www.example.com', False, False,
+                      'md5', 2345, 234)
         self.assertEqual(len(context.actions), 1)
         args, kw = context.actions[0]
         self.assertEqual(args, ())
@@ -43,7 +49,8 @@ class Test_configureSSC(unittest.TestCase):
             'callable': _doConfigure,
             'discriminator': 'configureSSC',
             'args': ('SECRET', 'SALT', 'COOKIE', 1234,
-                     '/foo', 'www.example.com', False, False),
+                     '/foo', 'www.example.com', False, False,
+                      'md5', 2345, 234),
         })
 
 

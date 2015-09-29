@@ -4,6 +4,9 @@ Changelog
 0.2 (unreleased)
 ----------------
 
+- Add support for extra Pyramid session configuration via ZCML:
+  ``hash_algorithm``, ``timeout``, ``reissue_time``.
+
 - Suppress empty / None values in cookie attributes passed to
   ``ZPublisher.HTTPResponse.setCookie``.
 
