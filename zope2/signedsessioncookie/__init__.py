@@ -68,7 +68,11 @@ def ssc_hook(container, request):
     request.add_response_callback = _add_response_callback
 
     # Make the response emulate Pyramid's response.
-    request.RESPONSE.set_cookie = request.RESPONSE.setCookie
+    response = request.RESPONSE
+    def _setCookie(name, value, quoted=True, **kw):
+        scrubbed = dict([(k, v) for k, v in kw.items() if v])
+        response.setCookie(name, value, quoted=quoted, **scrubbed)
+    response.set_cookie = _setCookie
 
     # Set up the lazy SESSION implementation.
     klass = _getSessionClass()
