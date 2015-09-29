@@ -114,8 +114,7 @@ class Test_ssc_hook(_Base):
 
         self._callFUT(container, request)
 
-        self.assertTrue(response.set_cookie.im_func is
-                        response.setCookie.im_func)
+        self.assertTrue(response.set_cookie is not response.setCookie.im_func)
         self.assertEqual(request._lazy.keys(), ['SESSION'])
         self.assertEqual(len(_handled), 0)
         session = request._lazy['SESSION']()
@@ -186,8 +185,11 @@ class _ZopeResponse(object):
     def __init__(self):
         self.cookies = {}
 
-    def setCookie(self, name, **kw):
-        self.cookies[name] = kw
+    def setCookie(self, name, value, quoted=True, **kw):
+        cookie = kw.copy()
+        cookie['value'] = value
+        cookie['quoted'] = quoted
+        self.cookies[name] = cookie
         self.counter += 1
 
 

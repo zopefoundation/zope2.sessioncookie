@@ -10,7 +10,7 @@ class SignedSessionCookieConfig(object):
                  salt=None,
                  cookie_name='session',
                  max_age=None,
-                 path='/',
+                 path=None,
                  domain=None,
                  secure=True,
                  http_only=True,
@@ -20,7 +20,7 @@ class SignedSessionCookieConfig(object):
         self.cookie_name = cookie_name
         self.max_age = max_age
         self.path = path
-        self.domain = domain or ''
+        self.domain = domain
         self.secure = secure
         self.http_only = http_only
 

@@ -27,8 +27,8 @@ class SignedSessionCookieConfigTests(unittest.TestCase):
         self.assertEqual(config.salt, None)
         self.assertEqual(config.cookie_name, 'session')
         self.assertEqual(config.max_age, None)
-        self.assertEqual(config.path, '/')
-        self.assertEqual(config.domain, '')
+        self.assertEqual(config.path, None)
+        self.assertEqual(config.domain, None)
         self.assertEqual(config.secure, True)
         self.assertEqual(config.http_only, True)
 
@@ -49,8 +49,6 @@ class SignedSessionCookieConfigTests(unittest.TestCase):
         self.assertEqual(config.getCookieAttrs(),
                          {'secret': 'SECRET',
                           'cookie_name': 'session',
-                          'path': '/',
-                          'domain': '',
                           'secure': True,
                           'httponly': True,
                          })
