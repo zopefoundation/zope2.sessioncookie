@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.2 (unreleased)
+0.2 (2015-09-29)
 ----------------
 
 - Add support for extra Pyramid session configuration via ZCML:
