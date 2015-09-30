@@ -4,7 +4,7 @@ Changelog
 0.3 (unreleased)
 ----------------
 
-- TBD
+- Fix rendering ``http_only`` cookie attribute.
 
 0.2 (2015-09-29)
 ----------------
