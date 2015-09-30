@@ -71,6 +71,7 @@ def ssc_hook(container, request):
     response = request.RESPONSE
     def _setCookie(name, value, quoted=True, **kw):
         scrubbed = dict([(k, v) for k, v in kw.items() if v])
+        scrubbed['http_only'] = scrubbed.pop('httponly')
         response.setCookie(name, value, quoted=quoted, **scrubbed)
     response.set_cookie = _setCookie
 
