@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.3 (unreleased)
+0.3 (2015-09-30)
 ----------------
 
 - Fix rendering ``http_only`` cookie attribute.

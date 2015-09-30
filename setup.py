@@ -9,7 +9,7 @@ with open('CHANGES.rst') as f:
     CHANGES = f.read()
 
 setup(name='zope2.signedsessioncookie',
-      version='0.3.dev0',
+      version='0.3',
       description='Use Pyramid signed sessison cookie as Zope2 session manager',
       long_description='\n\n'.join([README, CHANGES]),
       url='https://github.com/zeomega/zope2.signedsessioncookie',
