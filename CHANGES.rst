@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.4 (unreleased)
+0.4 (2015-10-05)
 ----------------
 
 - Add an attribute, ``signedsessioncookie_installed``, to the root object
