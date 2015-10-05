@@ -16,6 +16,7 @@ def main(root):
         sdm.updateTraversalData(requestSessionName=None)
 
     registerBeforeTraverse(root, ssc_hook, 'signedsessioncookie', 50)
+    root.signedsessioncookie_installed = True
 
     print('zope2.signedsessioncookie hook installed!')
     transaction.commit()
