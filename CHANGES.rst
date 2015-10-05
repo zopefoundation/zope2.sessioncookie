@@ -4,7 +4,8 @@ Changelog
 0.4 (unreleased)
 ----------------
 
-- TBD
+- Add an attribute, ``signedsessioncookie_installed``, to the root object
+  during installation.
 
 0.3 (2015-09-30)
 ----------------
