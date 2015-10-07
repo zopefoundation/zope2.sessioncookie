@@ -1,3 +1,6 @@
+import struct
+
+from pyramid.compat import pickle
 from zope.interface import implementer
 
 try:
@@ -11,6 +14,28 @@ else:
     IV = Random.new().read(BLOCK_SIZE)
 
 from .interfaces import ISignedSessionCookieConfig
+
+
+class EncryptingPickleSerializer(object):
+
+    def __init__(self, secret):
+        self.secret = secret
+
+    def loads(self, bstruct):
+        iv, payload = bstruct[:BLOCK_SIZE], bstruct[BLOCK_SIZE:]
+        cipher = Blowfish.new(self.secret, Blowfish.MODE_CBC, iv)
+        payload = cipher.decrypt(payload)
+        return pickle.loads(payload)
+
+    def dumps(self, appstruct):
+        pickled = pickle.dumps(appstruct)
+        # For an explanation / example of the padding, see:
+        # https://www.dlitz.net/software/pycrypto/api/current/\
+        # Crypto.Cipher.Blowfish-module.html
+        plen = BLOCK_SIZE - divmod(len(pickled), BLOCK_SIZE)[1]
+        padding = struct.pack('b' * plen, *([plen] * plen))
+        cipher = Blowfish.new(self.secret, Blowfish.MODE_CBC, IV)
+        return IV + cipher.encrypt(pickled + padding)
 
 
 @implementer(ISignedSessionCookieConfig)
@@ -50,7 +75,7 @@ class SignedSessionCookieConfig(object):
         result = dict([(key, value) for key, value in self.__dict__.items()
                        if value is not None])
         if result.pop('encrypt'):
-            result['serializer'] = object()  # Replace w/ serializer
+            result['serializer'] = EncryptingPickleSerializer(self.secret)
         result['httponly'] = result.pop('http_only')
         if 'hash_algorithm' in result:
             result['hashalg'] = result.pop('hash_algorithm')
