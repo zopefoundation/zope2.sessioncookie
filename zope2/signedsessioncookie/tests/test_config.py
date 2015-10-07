@@ -179,6 +179,24 @@ class SignedSessionCookieConfigTests(unittest.TestCase):
                           'reissue_time': 234,
                          })
 
+    def test_getCookieAttrs_w_encrypt(self):
+        from zope2.signedsessioncookie.config import EncryptingPickleSerializer
+        config = self._makeOne('SECRET', 'SALT', 'COOKIE', 1234,
+                               '/foo', 'www.example.com', False, False,
+                               'md5', 2345, 234, True)
+        self.assertEqual(config.getCookieAttrs(),
+                         {'cookie_name': 'COOKIE',
+                          'max_age': 1234,
+                          'path': '/foo',
+                          'domain': 'www.example.com',
+                          'secure': False,
+                          'httponly': False,
+                          'hashalg': 'md5',
+                          'timeout': 2345,
+                          'reissue_time': 234,
+                          'serializer': EncryptingPickleSerializer('SECRET'),
+                         })
+
 
 class _Blowfish(object):
 

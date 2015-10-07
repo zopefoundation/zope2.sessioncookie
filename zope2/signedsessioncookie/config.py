@@ -37,6 +37,11 @@ class EncryptingPickleSerializer(object):
         cipher = Blowfish.new(self.secret, Blowfish.MODE_CBC, IV)
         return IV + cipher.encrypt(pickled + padding)
 
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        return self.secret == other.secret
+
 
 @implementer(ISignedSessionCookieConfig)
 class SignedSessionCookieConfig(object):
@@ -76,6 +81,10 @@ class SignedSessionCookieConfig(object):
                        if value is not None])
         if result.pop('encrypt'):
             result['serializer'] = EncryptingPickleSerializer(self.secret)
+            if 'secret' in result:
+                del result['secret']
+            if 'salt' in result:
+                del result['salt']
         result['httponly'] = result.pop('http_only')
         if 'hash_algorithm' in result:
             result['hashalg'] = result.pop('hash_algorithm')
