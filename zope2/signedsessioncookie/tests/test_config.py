@@ -51,6 +51,18 @@ class SignedSessionCookieConfigTests(unittest.TestCase):
         self.assertEqual(config.timeout, 2345)
         self.assertEqual(config.reissue_time, 234)
 
+    def test_ctor_no_pycrypto(self):
+        from zope2.signedsessioncookie import config as MUT
+        with _Monkey(MUT, _HAS_CRYPTO=False):
+            with self.assertRaises(ValueError):
+                self._makeOne('SECRET', encrypt=True)
+
+    def test_ctor_w_pycrypto(self):
+        from zope2.signedsessioncookie import config as MUT
+        with _Monkey(MUT, _HAS_CRYPTO=True):
+            config = self._makeOne('SECRET', encrypt=True)
+            self.assertTrue(config.encrypt)
+
     def test_getCookieAttrs_defaults(self):
         config = self._makeOne('SECRET')
         self.assertEqual(config.getCookieAttrs(),
@@ -77,3 +89,20 @@ class SignedSessionCookieConfigTests(unittest.TestCase):
                           'timeout': 2345,
                           'reissue_time': 234,
                          })
+
+
+class _Monkey(object):
+    # context-manager for replacing module names in the scope of a test.
+
+    def __init__(self, module, **kw):
+        self.module = module
+        self.to_restore = dict([(key, getattr(module, key)) for key in kw])
+        for key, value in kw.items():
+            setattr(module, key, value)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        for key, value in self.to_restore.items():
+            setattr(self.module, key, value)
