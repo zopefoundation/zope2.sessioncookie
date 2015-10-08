@@ -5,7 +5,7 @@ from .config import SignedSessionCookieConfig
 
 def _doConfigure(_secret, _salt, _cookie_name, _max_age, _path, _domain,
                  _secure, _http_only,
-                 _hash_algorithm, _timeout, _reissue_time):
+                 _hash_algorithm, _timeout, _reissue_time, _encrypt):
 
     config = SignedSessionCookieConfig(
         secret = _secret,
@@ -19,6 +19,7 @@ def _doConfigure(_secret, _salt, _cookie_name, _max_age, _path, _domain,
         hash_algorithm = _hash_algorithm,
         timeout = _timeout,
         reissue_time = _reissue_time,
+        encrypt = _encrypt,
         )
 
     provideUtility(config)
@@ -36,10 +37,11 @@ def configureSSC(context,
                  hash_algorithm=None,
                  timeout=None,
                  reissue_time=None,
+                 encrypt=False,
                 ):
     context.action(discriminator='configureSSC',
                    callable=_doConfigure,
                    args=(secret, salt, cookie_name, max_age, path, domain,
                          secure, http_only,
-                         hash_algorithm, timeout, reissue_time)
+                         hash_algorithm, timeout, reissue_time, encrypt)
                    )

@@ -13,7 +13,7 @@ class Test__doConfigure(unittest.TestCase):
         from ..interfaces import ISignedSessionCookieConfig
         self._callFUT('SECRET', 'SALT', 'COOKIE', 1234,
                       '/foo', 'www.example.com', False, False,
-                      'md5', 2345, 234)
+                      'md5', 2345, 234, True)
         config = getUtility(ISignedSessionCookieConfig)
         self.assertTrue(isinstance(config, SignedSessionCookieConfig))
         self.assertEqual(config.secret, 'SECRET')
@@ -28,6 +28,7 @@ class Test__doConfigure(unittest.TestCase):
         #self.assertEqual(config.hashalg, 'md5')
         self.assertEqual(config.timeout, 2345)
         self.assertEqual(config.reissue_time, 234)
+        self.assertEqual(config.encrypt, True)
 
 
 class Test_configureSSC(unittest.TestCase):
@@ -41,7 +42,7 @@ class Test_configureSSC(unittest.TestCase):
         context = _Context()
         self._callFUT(context, 'SECRET', 'SALT', 'COOKIE', 1234,
                       '/foo', 'www.example.com', False, False,
-                      'md5', 2345, 234)
+                      'md5', 2345, 234, True)
         self.assertEqual(len(context.actions), 1)
         args, kw = context.actions[0]
         self.assertEqual(args, ())
@@ -50,7 +51,7 @@ class Test_configureSSC(unittest.TestCase):
             'discriminator': 'configureSSC',
             'args': ('SECRET', 'SALT', 'COOKIE', 1234,
                      '/foo', 'www.example.com', False, False,
-                      'md5', 2345, 234),
+                      'md5', 2345, 234, True),
         })
 
 

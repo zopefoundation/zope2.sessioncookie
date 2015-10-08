@@ -4,7 +4,8 @@ Changelog
 0.5 (unreleased)
 ----------------
 
-- TBD
+- Add support for (optionally) encrypting session cookies, rather than
+  signing them.
 
 0.4 (2015-10-05)
 ----------------

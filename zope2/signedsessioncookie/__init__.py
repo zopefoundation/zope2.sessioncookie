@@ -3,6 +3,7 @@
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from AccessControl.class_init import InitializeClass
 from ZPublisher.interfaces import IPubBeforeCommit
+from pyramid.session import BaseCookieSessionFactory
 from pyramid.session import SignedCookieSessionFactory
 from zope.component import adapter
 from zope.component import getUtility
@@ -25,7 +26,10 @@ def _getSessionClass():
     if ZopeCookieSession is None:
         config = getUtility(ISignedSessionCookieConfig)
         attrs = config.getCookieAttrs()
-        PyramidCookieSession = SignedCookieSessionFactory(**attrs)
+        if 'serializer' in attrs:
+            PyramidCookieSession = BaseCookieSessionFactory(**attrs)
+        else:
+            PyramidCookieSession = SignedCookieSessionFactory(**attrs)
 
         class ZopeCookieSession(PyramidCookieSession):
             """Wrap Pyramid's class, adding Zope2 security majyk.

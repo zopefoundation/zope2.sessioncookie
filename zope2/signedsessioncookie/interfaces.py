@@ -75,6 +75,12 @@ class ISignedSessionCookieConfig(Interface):
         required=False,
     )
 
+    encrypt = Bool(
+        title=u"Encrypt Cookie",
+        description=u"Encrypt cookie text (requires ``pyCrypto``)?",
+        required=False,
+    )
+
 
 class ISignedSessionCookieCreated(Interface):
     """ Event interface for newly-created session.
