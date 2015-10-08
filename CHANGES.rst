@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.5 (unreleased)
+0.5 (2015-10-08)
 ----------------
 
 - Add support for (optionally) encrypting session cookies, rather than
