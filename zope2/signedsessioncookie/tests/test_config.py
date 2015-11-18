@@ -1,95 +1,6 @@
 import unittest
 
 
-class EncryptingPickleSerializerTests(unittest.TestCase):
-
-    def _getTargetClass(self):
-        from ..config import EncryptingPickleSerializer
-        return EncryptingPickleSerializer
-
-    def _makeOne(self, *args, **kw):
-        return self._getTargetClass()(*args, **kw)
-
-    def test_ctor(self):
-        SECRET = 'SEEKRIT'
-        eps = self._makeOne(SECRET)
-        self.assertEqual(eps.secret, SECRET)
-
-    def test_dumps_short(self):
-        from pyramid.compat import pickle
-        from zope2.signedsessioncookie import config as MUT
-        SECRET = 'SEEKRIT'
-        IV = 'ABCDEFGH'
-        APPSTRUCT = {}
-        PICKLED = pickle.dumps(APPSTRUCT)
-        with _Monkey(MUT,
-                     _HAS_CRYPTO=True,
-                     Blowfish=_Blowfish,
-                     BLOCK_SIZE=8,
-                     IV=IV,
-                    ):
-            eps = self._makeOne(SECRET)
-            iv_encrypted = eps.dumps(APPSTRUCT)
-            iv, encrypted = iv_encrypted[:8], iv_encrypted[8:]
-            self.assertEqual(iv, IV)
-            self.assertTrue(encrypted.startswith(PICKLED))
-            self.assertEqual(len(encrypted) % 8, 0)
-
-    def test_dumps_longer(self):
-        from pyramid.compat import pickle
-        from zope2.signedsessioncookie import config as MUT
-        SECRET = 'SEEKRIT'
-        IV = 'ABCDEFGH'
-        APPSTRUCT = {'foo': 'bar', 'baz': 1}
-        PICKLED = pickle.dumps(APPSTRUCT)
-        with _Monkey(MUT,
-                     _HAS_CRYPTO=True,
-                     Blowfish=_Blowfish,
-                     BLOCK_SIZE=8,
-                     IV=IV,
-                    ):
-            eps = self._makeOne(SECRET)
-            iv_encrypted = eps.dumps(APPSTRUCT)
-            iv, encrypted = iv_encrypted[:8], iv_encrypted[8:]
-            self.assertEqual(iv, IV)
-            self.assertTrue(encrypted.startswith(PICKLED))
-            self.assertEqual(len(encrypted) % 8, 0)
-
-    def test_loads_short(self):
-        from pyramid.compat import pickle
-        from zope2.signedsessioncookie import config as MUT
-        SECRET = 'SEEKRIT'
-        IV = 'ABCDEFGH'
-        APPSTRUCT = {}
-        PICKLED = pickle.dumps(APPSTRUCT)
-        PLEN = len(PICKLED) % 8
-        with _Monkey(MUT,
-                     _HAS_CRYPTO=True,
-                     Blowfish=_Blowfish,
-                     BLOCK_SIZE=8,
-                    ):
-            eps = self._makeOne(SECRET)
-            loaded = eps.loads(IV + PICKLED + 'x' * PLEN)
-            self.assertEqual(loaded, APPSTRUCT)
-
-    def test_loads_longer(self):
-        from pyramid.compat import pickle
-        from zope2.signedsessioncookie import config as MUT
-        SECRET = 'SEEKRIT'
-        IV = 'ABCDEFGH'
-        APPSTRUCT = {'foo': 'bar', 'baz': 1}
-        PICKLED = pickle.dumps(APPSTRUCT)
-        PLEN = len(PICKLED) % 8
-        with _Monkey(MUT,
-                     _HAS_CRYPTO=True,
-                     Blowfish=_Blowfish,
-                     BLOCK_SIZE=8,
-                    ):
-            eps = self._makeOne(SECRET)
-            loaded = eps.loads(IV + PICKLED + 'x' * PLEN)
-            self.assertEqual(loaded, APPSTRUCT)
-
-
 class SignedSessionCookieConfigTests(unittest.TestCase):
 
     def _getTargetClass(self):
@@ -140,15 +51,15 @@ class SignedSessionCookieConfigTests(unittest.TestCase):
         self.assertEqual(config.timeout, 2345)
         self.assertEqual(config.reissue_time, 234)
 
-    def test_ctor_no_pycrypto(self):
+    def test_ctor_no_pyramid_nacl_session(self):
         from zope2.signedsessioncookie import config as MUT
-        with _Monkey(MUT, _HAS_CRYPTO=False):
+        with _Monkey(MUT, _HAS_PYRAMID_NACL_SESSION=False):
             with self.assertRaises(ValueError):
                 self._makeOne('SECRET', encrypt=True)
 
     def test_ctor_w_pycrypto(self):
         from zope2.signedsessioncookie import config as MUT
-        with _Monkey(MUT, _HAS_CRYPTO=True):
+        with _Monkey(MUT, _HAS_PYRAMID_NACL_SESSION=True):
             config = self._makeOne('SECRET', encrypt=True)
             self.assertTrue(config.encrypt)
 
@@ -180,11 +91,15 @@ class SignedSessionCookieConfigTests(unittest.TestCase):
                          })
 
     def test_getCookieAttrs_w_encrypt(self):
-        from zope2.signedsessioncookie.config import EncryptingPickleSerializer
-        config = self._makeOne('SECRET', 'SALT', 'COOKIE', 1234,
+        from pyramid_nacl_session import EncryptingPickleSerializer
+        SECRET = b'\x01' * 32
+        config = self._makeOne(SECRET, 'SALT', 'COOKIE', 1234,
                                '/foo', 'www.example.com', False, False,
                                'md5', 2345, 234, True)
-        self.assertEqual(config.getCookieAttrs(),
+        attrs = config.getCookieAttrs()
+        serializer = attrs.pop('serializer')
+        self.assertTrue(isinstance(serializer, EncryptingPickleSerializer))
+        self.assertEqual(attrs,
                          {'cookie_name': 'COOKIE',
                           'max_age': 1234,
                           'path': '/foo',
@@ -194,23 +109,7 @@ class SignedSessionCookieConfigTests(unittest.TestCase):
                           'hashalg': 'md5',
                           'timeout': 2345,
                           'reissue_time': 234,
-                          'serializer': EncryptingPickleSerializer('SECRET'),
                          })
-
-
-class _Blowfish(object):
-
-    MODE_CBC = 1
-
-    @classmethod
-    def new(cls, secret, mode, iv):
-        return cls()
-
-    def encrypt(self, plaintext):
-        return plaintext
-
-    def decrypt(self, encrypted):
-        return encrypted
 
 
 class _Monkey(object):

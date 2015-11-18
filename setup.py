@@ -17,7 +17,11 @@ setup(name='zope2.signedsessioncookie',
       packages=find_packages(),
       namespace_packages=['zope2',],
       include_package_data=True,
-      install_requires=['pyramid>=1.5', 'Zope2>=2.13'],
+      install_requires=[
+        'pyramid>=1.5',
+        'Zope2>=2.13',
+        'pyramid_nacl_session',
+      ],
       test_suite='zope2.signedsessioncookie.tests',
       extras_require={'encrypted': ['pycrypto']},
 )
