@@ -10,7 +10,8 @@ with open('CHANGES.rst') as f:
 
 setup(name='zope2.sessioncookie',
       version='0.6.dev0',
-      description='Allow use of Pyramid-style signed or encrypted cookie for scallable Zope2 session storage',
+      description='Allow use of Pyramid-style signed or encrypted cookie '
+                  'for scallable Zope2 session storage',
       long_description='\n\n'.join([README, CHANGES]),
       url='https://github.com/zopefoundation/zope2.sessioncookie',
       license='ZPL 2.1',
