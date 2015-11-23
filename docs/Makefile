@@ -87,9 +87,9 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/zope2signedsessioncookie.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/zope2sessioncookie.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/zope2signedsessioncookie.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/zope2sessioncookie.qhc"
 
 applehelp:
 	$(SPHINXBUILD) -b applehelp $(ALLSPHINXOPTS) $(BUILDDIR)/applehelp
@@ -104,8 +104,8 @@ devhelp:
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/zope2signedsessioncookie"
-	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/zope2signedsessioncookie"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/zope2sessioncookie"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/zope2sessioncookie"
 	@echo "# devhelp"
 
 epub:

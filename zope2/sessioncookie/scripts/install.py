@@ -7,7 +7,7 @@
 import transaction
 from ZPublisher.BeforeTraverse import registerBeforeTraverse
 
-from zope2.signedsessioncookie import ssc_hook
+from zope2.sessioncookie import ssc_hook
 
 
 def main(root):
@@ -15,10 +15,10 @@ def main(root):
     if sdm is not None:
         sdm.updateTraversalData(requestSessionName=None)
 
-    registerBeforeTraverse(root, ssc_hook, 'signedsessioncookie', 50)
-    root.signedsessioncookie_installed = True
+    registerBeforeTraverse(root, ssc_hook, 'sessioncookie', 50)
+    root.sessioncookie_installed = True
 
-    print('zope2.signedsessioncookie hook installed!')
+    print('zope2.sessioncookie hook installed!')
     transaction.commit()
 
 

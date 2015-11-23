@@ -6,7 +6,7 @@ from zope.schema import TextLine
 
 
 class ISignedSessionCookieConfig(Interface):
-    """Schema for <signedsessioncookie> directive.
+    """Schema for <sessioncookie> directive.
     """
     secret = TextLine(
         title=u"Secret",

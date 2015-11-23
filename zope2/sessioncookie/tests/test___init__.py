@@ -5,14 +5,14 @@ class _Base(unittest.TestCase):
 
     def setUp(self):
         from zope.component.testing import setUp
-        from zope2 import signedsessioncookie
+        from zope2 import sessioncookie
         setUp()
-        signedsessioncookie.ZopeCookieSession = None
+        sessioncookie.ZopeCookieSession = None
 
     def tearDown(self):
         from zope.component.testing import tearDown
-        from zope2 import signedsessioncookie
-        signedsessioncookie.ZopeCookieSession = None
+        from zope2 import sessioncookie
+        sessioncookie.ZopeCookieSession = None
         tearDown()
 
     def _setUpUtility(self, secret='SEEKRIT', cookie_name='COOKIE'):
@@ -29,18 +29,18 @@ class Test__getSessionClass(_Base):
         return _getSessionClass()
 
     def test_w_existing_set(self):
-        from zope2 import signedsessioncookie
-        EXISTING = signedsessioncookie.ZopeCookieSession = object()
+        from zope2 import sessioncookie
+        EXISTING = sessioncookie.ZopeCookieSession = object()
         klass = self._callFUT()
         self.assertTrue(klass is EXISTING)
 
     def test_wo_existing_set(self):
-        from zope2 import signedsessioncookie
-        self.assertTrue(signedsessioncookie.ZopeCookieSession is None)
+        from zope2 import sessioncookie
+        self.assertTrue(sessioncookie.ZopeCookieSession is None)
         self._setUpUtility()
         klass = self._callFUT()
         self.assertEqual(klass._cookie_name, 'COOKIE')
-        self.assertTrue(signedsessioncookie.ZopeCookieSession is klass)
+        self.assertTrue(sessioncookie.ZopeCookieSession is klass)
 
     def test_session_class_extras(self):
         self._setUpUtility()

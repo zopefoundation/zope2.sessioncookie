@@ -4,6 +4,10 @@ Changelog
 0.6 (unreleased)
 ----------------
 
+- Transferred copyright to Zope Foundation, relicensed to ZPL 2.1.
+
+- Renamed from ``zope2.signedsessioncookie`` -> ``zope2.sessioncookie``.
+
 - Replace locally-defined ``EncryptingPickleSerialzer`` with the version
   from ``pyramid_nacl_session``.  Closes #8 and #9.
 

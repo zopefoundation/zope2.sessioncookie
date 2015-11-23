@@ -4,7 +4,7 @@ import unittest
 class Test__doConfigure(unittest.TestCase):
 
     def _callFUT(self, *args, **kw):
-        from zope2.signedsessioncookie.zcml import _doConfigure
+        from ..zcml import _doConfigure
         return _doConfigure(*args, **kw)
 
     def test_it(self):
@@ -31,14 +31,14 @@ class Test__doConfigure(unittest.TestCase):
         self.assertEqual(config.encrypt, True)
 
 
-class Test_configureSSC(unittest.TestCase):
+class Test_configureSessionCookie(unittest.TestCase):
 
     def _callFUT(self, *args, **kw):
-        from zope2.signedsessioncookie.zcml import configureSSC
-        return configureSSC(*args, **kw)
+        from ..zcml import configureSessionCookie
+        return configureSessionCookie(*args, **kw)
 
     def test_it(self):
-        from zope2.signedsessioncookie.zcml import _doConfigure
+        from ..zcml import _doConfigure
         context = _Context()
         self._callFUT(context, 'SECRET', 'SALT', 'COOKIE', 1234,
                       '/foo', 'www.example.com', False, False,
@@ -48,7 +48,7 @@ class Test_configureSSC(unittest.TestCase):
         self.assertEqual(args, ())
         self.assertEqual(kw, {
             'callable': _doConfigure,
-            'discriminator': 'configureSSC',
+            'discriminator': 'configureSessionCookie',
             'args': ('SECRET', 'SALT', 'COOKIE', 1234,
                      '/foo', 'www.example.com', False, False,
                       'md5', 2345, 234, True),

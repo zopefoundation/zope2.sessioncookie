@@ -1,5 +1,5 @@
-:mod:`zope2.signedsessioncookie`
-================================
+:mod:`zope2.sessioncookie`
+==========================
 
 Contents:
 
