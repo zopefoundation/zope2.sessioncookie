@@ -37,12 +37,12 @@ class Test_configureSessionCookie(unittest.TestCase):
         from ..zcml import configureSessionCookie
         return configureSessionCookie(*args, **kw)
 
-    def test_it(self):
+    def test_wo_encryt(self):
         from ..zcml import _doConfigure
         context = _Context()
         self._callFUT(context, 'SECRET', 'SALT', 'COOKIE', 1234,
                       '/foo', 'www.example.com', False, False,
-                      'md5', 2345, 234, True)
+                      'md5', 2345, 234, False)
         self.assertEqual(len(context.actions), 1)
         args, kw = context.actions[0]
         self.assertEqual(args, ())
@@ -51,9 +51,53 @@ class Test_configureSessionCookie(unittest.TestCase):
             'discriminator': 'configureSessionCookie',
             'args': ('SECRET', 'SALT', 'COOKIE', 1234,
                      '/foo', 'www.example.com', False, False,
+                      'md5', 2345, 234, False),
+        })
+
+    def test_w_encryt_w_secret_not_32_bytes(self):
+        context = _Context()
+        self.assertRaises(ValueError, self._callFUT,
+            context, 'SECRET', 'SALT', 'COOKIE', 1234,
+            '/foo', 'www.example.com', False, False,
+            'md5', 2345, 234, True)
+
+    def test_w_encryt_w_secret_32_bytes(self):
+        from ..zcml import _doConfigure
+        context = _Context()
+        SECRET = b'\x01' * 32
+        self._callFUT(context, SECRET, 'SALT', 'COOKIE', 1234,
+                      '/foo', 'www.example.com', False, False,
+                      'md5', 2345, 234, True)
+        self.assertEqual(len(context.actions), 1)
+        args, kw = context.actions[0]
+        self.assertEqual(args, ())
+        self.assertEqual(kw, {
+            'callable': _doConfigure,
+            'discriminator': 'configureSessionCookie',
+            'args': (SECRET, 'SALT', 'COOKIE', 1234,
+                     '/foo', 'www.example.com', False, False,
                       'md5', 2345, 234, True),
         })
 
+    def test_w_encryt_w_secret_32_bytes_hexlified(self):
+        import binascii
+        from ..zcml import _doConfigure
+        context = _Context()
+        SECRET = b'\x01' * 32
+        HEXLIFIED = binascii.hexlify(SECRET)
+        self._callFUT(context, HEXLIFIED, 'SALT', 'COOKIE', 1234,
+                      '/foo', 'www.example.com', False, False,
+                      'md5', 2345, 234, True)
+        self.assertEqual(len(context.actions), 1)
+        args, kw = context.actions[0]
+        self.assertEqual(args, ())
+        self.assertEqual(kw, {
+            'callable': _doConfigure,
+            'discriminator': 'configureSessionCookie',
+            'args': (SECRET, 'SALT', 'COOKIE', 1234,
+                     '/foo', 'www.example.com', False, False,
+                      'md5', 2345, 234, True),
+        })
 
 
 class _Context(object):

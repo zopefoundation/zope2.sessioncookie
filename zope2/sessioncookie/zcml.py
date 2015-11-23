@@ -1,3 +1,5 @@
+import binascii
+
 from zope.component import provideUtility
 
 from .config import SignedSessionCookieConfig
@@ -40,6 +42,12 @@ def configureSessionCookie(
         reissue_time=None,
         encrypt=False,
         ):
+    if encrypt:
+        if len(secret) == 64:  # assume helified
+            secret = binascii.unhexlify(secret)
+        if len(secret) != 32:
+            raise ValueError('Secret must be 32 bytes')
+
     context.action(discriminator='configureSessionCookie',
                    callable=_doConfigure,
                    args=(secret, salt, cookie_name, max_age, path, domain,
