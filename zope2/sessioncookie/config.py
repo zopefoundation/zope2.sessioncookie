@@ -1,7 +1,7 @@
 from zope.interface import implementer
 
 try:
-    from pyramid_nacl_session import EncryptingPickleSerializer
+    from pyramid_nacl_session import EncryptedSerializer
 except ImportError:
     _HAS_PYRAMID_NACL_SESSION = False
 else:
@@ -47,7 +47,7 @@ class SignedSessionCookieConfig(object):
         result = dict([(key, value) for key, value in self.__dict__.items()
                        if value is not None])
         if result.pop('encrypt'):
-            result['serializer'] = EncryptingPickleSerializer(self.secret)
+            result['serializer'] = EncryptedSerializer(self.secret)
             if 'secret' in result:
                 del result['secret']
             if 'salt' in result:

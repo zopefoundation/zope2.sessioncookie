@@ -91,14 +91,14 @@ class SignedSessionCookieConfigTests(unittest.TestCase):
                          })
 
     def test_getCookieAttrs_w_encrypt(self):
-        from pyramid_nacl_session import EncryptingPickleSerializer
+        from pyramid_nacl_session import EncryptedSerializer
         SECRET = b'\x01' * 32
         config = self._makeOne(SECRET, 'SALT', 'COOKIE', 1234,
                                '/foo', 'www.example.com', False, False,
                                'md5', 2345, 234, True)
         attrs = config.getCookieAttrs()
         serializer = attrs.pop('serializer')
-        self.assertTrue(isinstance(serializer, EncryptingPickleSerializer))
+        self.assertTrue(isinstance(serializer, EncryptedSerializer))
         self.assertEqual(attrs,
                          {'cookie_name': 'COOKIE',
                           'max_age': 1234,

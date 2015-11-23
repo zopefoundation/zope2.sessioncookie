@@ -35,7 +35,7 @@ setup(name='zope2.sessioncookie',
       install_requires=[
         'pyramid>=1.5',
         'Zope2>=2.13',
-        'pyramid_nacl_session',
+        'pyramid_nacl_session>=0.2',
       ],
       test_suite='zope2.sessioncookie.tests',
       extras_require={'encrypted': ['pycrypto']},

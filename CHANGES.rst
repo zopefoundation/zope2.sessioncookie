@@ -8,8 +8,8 @@ Changelog
 
 - Renamed from ``zope2.signedsessioncookie`` -> ``zope2.sessioncookie``.
 
-- Replace locally-defined ``EncryptingPickleSerialzer`` with the version
-  from ``pyramid_nacl_session``.  Closes #8 and #9.
+- Replace locally-defined ``EncryptingPickleSerialzer`` with
+  ``pyramid_nacl_session.EncryptedSerializer``.  Closes #8 and #9.
 
 0.5 (2015-10-08)
 ----------------
