@@ -4,7 +4,8 @@ Changelog
 0.6 (unreleased)
 ----------------
 
-- TBD
+- Replace locally-defined ``EncryptingPickleSerialzer`` with the version
+  from ``pyramid_nacl_session``.  Closes #8 and #9.
 
 0.5 (2015-10-08)
 ----------------

@@ -1,46 +1,13 @@
-import struct
-
-from pyramid.compat import pickle
 from zope.interface import implementer
 
 try:
-    from Crypto import Random
+    from pyramid_nacl_session import EncryptingPickleSerializer
 except ImportError:
-    _HAS_CRYPTO = False
+    _HAS_PYRAMID_NACL_SESSION = False
 else:
-    _HAS_CRYPTO = True
-    from Crypto.Cipher import Blowfish
-    BLOCK_SIZE = Blowfish.block_size
-    IV = Random.new().read(BLOCK_SIZE)
+    _HAS_PYRAMID_NACL_SESSION = True
 
 from .interfaces import ISignedSessionCookieConfig
-
-
-class EncryptingPickleSerializer(object):
-
-    def __init__(self, secret):
-        self.secret = secret
-
-    def loads(self, bstruct):
-        iv, payload = bstruct[:BLOCK_SIZE], bstruct[BLOCK_SIZE:]
-        cipher = Blowfish.new(self.secret, Blowfish.MODE_CBC, iv)
-        payload = cipher.decrypt(payload)
-        return pickle.loads(payload)
-
-    def dumps(self, appstruct):
-        pickled = pickle.dumps(appstruct)
-        # For an explanation / example of the padding, see:
-        # https://www.dlitz.net/software/pycrypto/api/current/\
-        # Crypto.Cipher.Blowfish-module.html
-        plen = BLOCK_SIZE - divmod(len(pickled), BLOCK_SIZE)[1]
-        padding = struct.pack('b' * plen, *([plen] * plen))
-        cipher = Blowfish.new(self.secret, Blowfish.MODE_CBC, IV)
-        return IV + cipher.encrypt(pickled + padding)
-
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        return self.secret == other.secret
 
 
 @implementer(ISignedSessionCookieConfig)
@@ -71,8 +38,8 @@ class SignedSessionCookieConfig(object):
         self.hash_algorithm = hash_algorithm
         self.timeout = timeout
         self.reissue_time = reissue_time
-        if encrypt and not _HAS_CRYPTO:
-            raise ValueError('Install pycrypto!')
+        if encrypt and not _HAS_PYRAMID_NACL_SESSION:
+            raise ValueError('Install pyramid_nacl_session!')
         self.encrypt = encrypt
 
     def getCookieAttrs(self):
