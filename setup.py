@@ -14,6 +14,8 @@ setup(name='zope2.sessioncookie',
                   'for scallable Zope2 session storage',
       long_description='\n\n'.join([README, CHANGES]),
       url='https://github.com/zopefoundation/zope2.sessioncookie',
+      author='Tres Seaver, Agendaless Consulting',
+      author_email='tseaver@agendaless.com',
       license='ZPL 2.1',
       classifiers=[
         "Development Status :: 3 - Alpha",
