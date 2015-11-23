@@ -16,7 +16,7 @@ setup(name='zope2.sessioncookie',
       license='ZPL 2.1',
       classifiers=[
         "Development Status :: 3 - Alpha",
-        "Framework :: Zope",
+        "Framework :: Zope2",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: Zope Public License",
         "Operating System :: OS Independent",
