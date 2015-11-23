@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.6 (unreleased)
+0.6 (2015-11-23)
 ----------------
 
 - Transferred copyright to Zope Foundation, relicensed to ZPL 2.1.
