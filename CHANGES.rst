@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.6.1 (unreleased)
+------------------
+
+- Packaging bug:  add missing ``MANIFEST.in``.
+
 0.6 (2015-11-23)
 ----------------
 
