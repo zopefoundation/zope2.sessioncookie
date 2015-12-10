@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.7 (unreleased)
+----------------
+
+- Add script for uninstalling the root traversal hook (PR #2).
+
 0.6.1 (2015-12-08)
 ------------------
 
@@ -11,7 +16,7 @@ Changelog
 
 - Transferred copyright to Zope Foundation, relicensed to ZPL 2.1.
 
-- Renamed from ``zope2.signedsessioncookie`` -> ``zope2.sessioncookie``.
+- Rename from ``zope2.signedsessioncookie`` -> ``zope2.sessioncookie``.
 
 - Replace locally-defined ``EncryptingPickleSerialzer`` with
   ``pyramid_nacl_session.EncryptedSerializer``.  Closes #8 and #9.
