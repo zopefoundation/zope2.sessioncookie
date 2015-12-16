@@ -35,8 +35,8 @@ Installation
 
 4. Generate a 32-byte, hexlified secret::
 
-   $ /path/to/virtualenv_with_zope2/bin/print_secret
-   DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
+    $ /path/to/virtualenv_with_zope2/bin/print_secret
+    DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
 
 4. Edit the ``site.zcml`` for your instance.  E.g.::
 

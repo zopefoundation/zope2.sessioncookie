@@ -1,10 +1,11 @@
 Changelog
 =========
 
-0.8 (unreleased)
-----------------
+0.7.1 (2015-12-16)
+------------------
 
-- TBD
+- Packaging bug:  fix rendering of ``README.txt`` in ``--long-description``
+  output.
 
 0.7 (2015-12-16)
 ----------------
