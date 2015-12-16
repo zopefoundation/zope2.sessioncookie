@@ -4,6 +4,10 @@ Changelog
 0.7 (unreleased)
 ----------------
 
+- Fix example ZCML snippet in ``README.rst`` (PR #3).
+
+- Fix ZCML namespace in ``zope2/sessioncookie/meta.zcml`` (PR #3).
+
 - Add script for uninstalling the root traversal hook (PR #2).
 
 0.6.1 (2015-12-08)
