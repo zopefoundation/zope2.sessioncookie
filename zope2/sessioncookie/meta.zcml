@@ -4,7 +4,7 @@
 
   <meta:directive
       name="sessioncookie"
-      namespace="https://github.com/zeomega/zope2.sessioncookie"
+      namespace="https://github.com/zopefoundation/zope2.sessioncookie"
       schema=".interfaces.ISignedSessionCookieConfig"
       handler=".zcml.configureSessionCookie"
       >

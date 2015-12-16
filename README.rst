@@ -51,7 +51,7 @@ Installation
 
     <sc:sessioncookie
      secret="DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"
-     secure="False",
+     secure="False"
      encrypt="True"/>
 
 5. Run the installation script, which disables the standard session
