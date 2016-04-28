@@ -63,6 +63,14 @@ class Test__getSessionClass(_Base):
         request._response_callbacks[0](request, response)
         self.assertEqual(response.counter, 1)
 
+    def test_session_class_set_method(self):
+        self._setUpUtility()
+        klass = self._callFUT()
+        request = _Request()
+        session = klass(request)
+        session.set('foo', 'bar')
+        self.assertEqual(session.__guarded_getitem__('foo'), 'bar')
+
 
 class SignedSessionCookieCreatedTests(unittest.TestCase):
 
