@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.8 (unreleased)
+0.8 (2016-04-28)
 ----------------
 
 - Add a ``ZopeCookieSession.set`` method (PR #4).
