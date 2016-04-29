@@ -4,7 +4,7 @@ Changelog
 0.8 (unreleased)
 ----------------
 
-- TBD
+- Add a ``ZopeCookieSession.set`` method (PR #4).
 
 0.7.1 (2015-12-16)
 ------------------
