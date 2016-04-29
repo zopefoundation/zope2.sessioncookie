@@ -47,6 +47,9 @@ def _getSessionClass():
             def __guarded_delitem__(self, key):
                 del self[key]
 
+            def set(self, key, value):
+                self[key] = value
+
         InitializeClass(ZopeCookieSession)
 
     return ZopeCookieSession
