@@ -1,5 +1,10 @@
+.. caution:: 
+
+    This repository has been archived. If you want to work on it please open a ticket in https://github.com/zopefoundation/meta/issues requesting its unarchival.
+
+
 ``zope2.sessioncookie``
-=============================
+=======================
 
 Bridge to allow using Pyramid's `cookie session implementation
 <http://docs.pylonsproject.org/projects/pyramid/en/latest/narr/sessions.html>`_
